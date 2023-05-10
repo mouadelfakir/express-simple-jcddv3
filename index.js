@@ -2,12 +2,16 @@ const express = require('express');
 const app = express();
 const port = 3010;
 const path = require('path');
-var cors = require('cors');
+const cors = require('cors');
+const orders = require('./orders.json');
 
 app.use(cors());
 
+app.get('/getOrdersWithoutImages', (req, res) => {
+  res.send(orders);
+});
+
 app.get('/getImageUrl', (req, res) => {
-  console.log('getImageUrl');
   const key = req.query.key;
   res.send({
     imageUrl: 'https://picsum.photos/1200/1200?random=' + key,
