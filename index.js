@@ -3,7 +3,6 @@ const app = express();
 const port = 3010;
 const path = require('path');
 const cors = require('cors');
-const https = require('https');
 const axios = require('axios');
 
 const orders = require('./orders.json');
@@ -14,7 +13,7 @@ app.get('/getOrdersWithoutImages', (req, res) => {
   res.send(orders);
 });
 
-app.get('/getOrdersWithImages', (req, res) => {
+app.get('/getOrdersWithImages', async (req, res) => {
   const endpoints = [];
   orders.forEach((order) =>
     endpoints.push(
@@ -22,10 +21,12 @@ app.get('/getOrdersWithImages', (req, res) => {
     )
   );
 
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then((data) => {
-    data.forEach((image, index) => {
-      orders[index]['imageUrl'] = image.data.imageUrl;
-    });
+  const response = await axios.all(
+    endpoints.map((endpoint) => axios.get(endpoint))
+  );
+  //console.log(response);
+  response.forEach((image, index) => {
+    orders[index]['imageUrl'] = image.data.imageUrl;
   });
 
   res.send(orders);
